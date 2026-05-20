@@ -1417,7 +1417,7 @@ app.get("/labo5", (req, res) => {
 });
 
 app.get("/ai", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "app/ai.html"));
+  res.sendFile(path.join(__dirname, "public", "app/aibot.html"));
 });
 
 app.get("/dl-pro", (req, res) => {
