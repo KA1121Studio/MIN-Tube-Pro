@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -316,6 +317,324 @@
     .chip.active {
       background: var(--chip-active-bg);
       color: var(--chip-active-text);
+    }
+
+    /* ===== AI Playlist Chip ===== */
+    .chip-ai {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--chip-bg);
+      color: var(--text);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .chip-ai::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(120deg, #4f8bff 0%, #a26bff 45%, #ff6bd6 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0.55;
+      z-index: -1;
+      transition: opacity 0.2s ease;
+    }
+    .chip-ai:hover { background: var(--chip-bg); }
+    .chip-ai:hover::before { opacity: 1; }
+    body.light-mode .chip-ai:hover { background: var(--chip-bg); }
+    .chip-ai-spark {
+      display: inline-block;
+      font-size: 13px;
+      line-height: 1;
+      background: linear-gradient(120deg, #4f8bff, #a26bff, #ff6bd6);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: aiSparkPulse 3.2s ease-in-out infinite;
+    }
+    @keyframes aiSparkPulse {
+      0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(162,107,255,0)); }
+      50% { transform: scale(1.15) rotate(8deg); filter: drop-shadow(0 0 6px rgba(162,107,255,0.45)); }
+    }
+    .chip-ai-label {
+      background: linear-gradient(120deg, #6ea2ff, #b98aff, #ff8edd);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+    }
+    body.light-mode .chip-ai-label {
+      background: linear-gradient(120deg, #2860d8, #7a3fd8, #d04ba8);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .chip-ai.active {
+      background: var(--chip-active-bg);
+    }
+    .chip-ai.active .chip-ai-label,
+    .chip-ai.active .chip-ai-spark {
+      -webkit-text-fill-color: var(--chip-active-text);
+      background: none;
+      color: var(--chip-active-text);
+    }
+
+    /* ===== AI Modal ===== */
+    .aim-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 2000;
+      animation: aimFade 0.18s ease-out;
+    }
+    .aim-overlay.open { display: flex; }
+    @keyframes aimFade { from { opacity: 0; } to { opacity: 1; } }
+    .aim-modal {
+      width: min(520px, 92vw);
+      max-height: 88vh;
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+      padding: 24px 22px 20px;
+      position: relative;
+      overflow: hidden;
+      animation: aimPop 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      display: flex; flex-direction: column;
+    }
+    @keyframes aimPop {
+      from { transform: translateY(16px) scale(0.96); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .aim-modal::before {
+      content: "";
+      position: absolute; left: 0; right: 0; top: 0; height: 3px;
+      background: linear-gradient(90deg, #4f8bff, #a26bff, #ff6bd6, #ffb56b);
+      background-size: 300% 100%;
+      animation: aimBar 6s linear infinite;
+    }
+    @keyframes aimBar { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
+    .aim-title {
+      font-size: 18px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .aim-title .aim-spark {
+      background: linear-gradient(120deg, #4f8bff, #a26bff, #ff6bd6);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: aiSparkPulse 3.2s ease-in-out infinite;
+    }
+    .aim-sub {
+      font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.55;
+    }
+    .aim-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .aim-input:focus { border-color: #a26bff; }
+    .aim-presets {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 12px 0 4px;
+    }
+    .aim-preset {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px; cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+    .aim-preset:hover { border-color: #a26bff; color: #c8aaff; }
+    .aim-preset.selected {
+      background: linear-gradient(120deg, rgba(79,139,255,0.18), rgba(162,107,255,0.22), rgba(255,107,214,0.18));
+      border-color: #a26bff; color: var(--text);
+    }
+    .aim-actions {
+      display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;
+    }
+    .aim-btn {
+      border: none; cursor: pointer; font-family: inherit;
+      padding: 10px 18px; border-radius: 999px;
+      font-size: 13px; font-weight: 600;
+      transition: transform 0.1s, filter 0.15s, background 0.15s;
+    }
+    .aim-btn:active { transform: scale(0.97); }
+    .aim-btn.ghost {
+      background: transparent; color: var(--text-muted);
+    }
+    .aim-btn.ghost:hover { color: var(--text); background: var(--card); }
+    .aim-btn.primary {
+      background: linear-gradient(120deg, #4f8bff, #a26bff, #ff6bd6);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(162,107,255,0.35);
+    }
+    .aim-btn.primary:hover { filter: brightness(1.08); }
+    .aim-btn.primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.3); }
+
+    .aim-choice {
+      display: grid; gap: 10px; margin: 6px 0 4px;
+    }
+    .aim-choice-card {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      color: var(--text);
+      font-family: inherit;
+      width: 100%;
+    }
+    .aim-choice-card:hover {
+      border-color: #a26bff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(162,107,255,0.18);
+    }
+    .aim-choice-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      background: linear-gradient(120deg, rgba(79,139,255,0.25), rgba(162,107,255,0.3), rgba(255,107,214,0.25));
+      flex-shrink: 0;
+    }
+    .aim-choice-text { flex: 1; min-width: 0; }
+    .aim-choice-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .aim-choice-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+    /* ===== AI Loading (Gemini-like) ===== */
+    .aim-loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 18px 8px 8px;
+      gap: 18px;
+    }
+    .aim-orb {
+      position: relative;
+      width: 86px; height: 86px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #4f8bff, #a26bff, #ff6bd6, #ffb56b, #4f8bff);
+      animation: aimSpin 2.4s linear infinite;
+      filter: blur(0.2px);
+      box-shadow: 0 0 30px rgba(162,107,255,0.45), 0 0 60px rgba(79,139,255,0.25);
+    }
+    .aim-orb::after {
+      content: "";
+      position: absolute; inset: 8px;
+      background: var(--surface);
+      border-radius: 50%;
+    }
+    .aim-orb::before {
+      content: "✨";
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      z-index: 2;
+      animation: aimSpark 2.2s ease-in-out infinite;
+    }
+    @keyframes aimSpin { to { transform: rotate(360deg); } }
+    @keyframes aimSpark {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255,255,255,0.6)); }
+      50%      { transform: scale(1.18); filter: drop-shadow(0 0 16px rgba(255,255,255,0.9)); }
+    }
+    .aim-loading-text {
+      font-size: 14px; font-weight: 600;
+      background: linear-gradient(90deg, #ffffff, #b98aff, #6ea2ff, #ffffff);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: aimShimmer 2.6s linear infinite;
+      text-align: center;
+    }
+    body.light-mode .aim-loading-text {
+      background: linear-gradient(90deg, #0f0f0f, #7a3fd8, #2860d8, #0f0f0f);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @keyframes aimShimmer { to { background-position: 300% 0; } }
+    .aim-loading-sub {
+      font-size: 12px; color: var(--text-muted);
+      text-align: center;
+      min-height: 16px;
+    }
+    .aim-progress {
+      width: 100%;
+      height: 4px; border-radius: 999px;
+      background: var(--card);
+      overflow: hidden;
+      position: relative;
+    }
+    .aim-progress::after {
+      content: "";
+      position: absolute; top: 0; left: -40%;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, #a26bff, #ff6bd6, transparent);
+      animation: aimSlide 1.6s ease-in-out infinite;
+      border-radius: 999px;
+    }
+    @keyframes aimSlide { to { left: 100%; } }
+
+    /* ===== AI Playlist Result ===== */
+    .aim-result {
+      display: flex; flex-direction: column; gap: 12px;
+      max-height: 56vh; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+      padding-right: 4px;
+    }
+    .aim-result::-webkit-scrollbar { width: 4px; }
+    .aim-result::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .aim-result-item {
+      display: flex; gap: 10px; align-items: center;
+      background: var(--card);
+      border-radius: 10px;
+      padding: 8px;
+      animation: aimItemIn 0.35s ease-out backwards;
+    }
+    @keyframes aimItemIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .aim-result-thumb {
+      width: 100px; height: 56px; border-radius: 6px;
+      object-fit: cover; flex-shrink: 0; background: #000;
+    }
+    .aim-result-info { flex: 1; min-width: 0; }
+    .aim-result-title {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; line-height: 1.35;
+    }
+    .aim-result-channel { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .aim-result-empty {
+      text-align: center; color: var(--text-muted); padding: 24px 10px;
+      font-size: 13px;
+    }
+    .aim-error {
+      background: rgba(255, 90, 90, 0.12);
+      color: #ff8a8a;
+      border: 1px solid rgba(255, 90, 90, 0.3);
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 12.5px; margin-top: 10px;
     }
 
     /* ===== CONTENT AREA ===== */
@@ -782,318 +1101,6 @@
         font-weight: 700;
       }
     }
-
-    /* ===== MIN-Pro-AI Playlist Chip ===== */
-    .chip.chip-ai {
-      background: linear-gradient(120deg, #4f8cff 0%, #a855f7 50%, #ec4899 100%);
-      color: #fff;
-      font-weight: 700;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.45);
-      animation: aiChipPulse 2.6s ease-in-out infinite;
-    }
-    .chip.chip-ai:hover { background: linear-gradient(120deg, #5b97ff 0%, #b365f8 50%, #f24aa3 100%); }
-    .chip.chip-ai::before {
-      content: "";
-      position: absolute; inset: 0;
-      background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%);
-      transform: translateX(-120%);
-      animation: aiChipShine 3.4s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes aiChipPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.55); }
-      50%      { box-shadow: 0 0 14px 4px rgba(168, 85, 247, 0.0); }
-    }
-    @keyframes aiChipShine {
-      0%   { transform: translateX(-120%); }
-      55%  { transform: translateX(140%); }
-      100% { transform: translateX(140%); }
-    }
-
-    /* ===== AI Modal ===== */
-    .ai-modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.72);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      display: none;
-      align-items: center; justify-content: center;
-      z-index: 4000;
-      padding: 20px;
-    }
-    .ai-modal-overlay.open { display: flex; }
-    .ai-modal {
-      background: var(--surface);
-      border-radius: 18px;
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow: hidden;
-      display: flex; flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      border: 1px solid var(--border);
-      animation: aiModalIn 0.28s cubic-bezier(.2,.9,.3,1.2);
-    }
-    @keyframes aiModalIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.96); }
-      to   { opacity: 1; transform: translateY(0)    scale(1); }
-    }
-    .ai-modal-header {
-      padding: 18px 20px 12px;
-      display: flex; align-items: center; gap: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .ai-modal-header .ai-logo {
-      width: 32px; height: 32px; border-radius: 10px;
-      background: linear-gradient(135deg, #4f8cff, #a855f7, #ec4899);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; color: #fff; font-size: 15px;
-      flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(168,85,247,0.35);
-    }
-    .ai-modal-title {
-      font-size: 16px; font-weight: 700; color: var(--text); flex: 1;
-    }
-    .ai-modal-close {
-      background: none; border: none; color: var(--text-muted);
-      cursor: pointer; width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .ai-modal-close:hover { background: var(--card); color: var(--text); }
-    .ai-modal-body { padding: 18px 20px; overflow-y: auto; }
-    .ai-modal-desc {
-      font-size: 14px; line-height: 1.6; color: var(--text);
-      margin-bottom: 14px;
-    }
-    .ai-modal-sub {
-      font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
-    }
-    .ai-input {
-      width: 100%; box-sizing: border-box;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 11px 14px;
-      border-radius: 10px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .ai-input:focus {
-      border-color: #a855f7;
-      box-shadow: 0 0 0 3px rgba(168,85,247,0.18);
-    }
-    .ai-chip-row {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin: 12px 0 6px;
-    }
-    .ai-chip {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 7px 13px;
-      border-radius: 999px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .ai-chip:hover { background: var(--border); }
-    .ai-chip.selected {
-      background: linear-gradient(120deg, #4f8cff, #a855f7);
-      border-color: transparent;
-      color: #fff;
-    }
-    .ai-modal-footer {
-      padding: 14px 20px 18px;
-      border-top: 1px solid var(--border);
-      display: flex; gap: 10px; justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-    .ai-btn {
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      transition: background 0.15s, transform 0.05s;
-    }
-    .ai-btn:hover { background: var(--border); }
-    .ai-btn:active { transform: scale(0.97); }
-    .ai-btn.primary {
-      background: linear-gradient(120deg, #4f8cff, #a855f7, #ec4899);
-      color: #fff;
-      border: none;
-      box-shadow: 0 6px 18px rgba(168,85,247,0.35);
-    }
-    .ai-btn.primary:hover { filter: brightness(1.08); }
-    .ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .ai-choice-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex; align-items: flex-start; gap: 12px;
-      background: var(--card);
-    }
-    .ai-choice-card:hover {
-      border-color: #a855f7;
-      background: rgba(168,85,247,0.08);
-      transform: translateY(-1px);
-    }
-    .ai-choice-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: linear-gradient(135deg, #4f8cff, #a855f7);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      color: #fff;
-    }
-    .ai-choice-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-    .ai-choice-desc  { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-    /* ===== Gemini-style loading ===== */
-    .ai-loader-wrap {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 14px 0 4px;
-    }
-    .ai-loader-stars {
-      position: relative; width: 110px; height: 110px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-    }
-    .ai-loader-star {
-      position: absolute;
-      background: linear-gradient(135deg, #4f8cff, #a855f7, #ec4899);
-      -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2l2.39 6.96L21.5 9.27l-5.5 4.73L17.77 21 12 17.27 6.23 21 8 14l-5.5-4.73L9.61 8.96z'/></svg>") center/contain no-repeat;
-              mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2l2.39 6.96L21.5 9.27l-5.5 4.73L17.77 21 12 17.27 6.23 21 8 14l-5.5-4.73L9.61 8.96z'/></svg>") center/contain no-repeat;
-      animation: starPulse 1.8s ease-in-out infinite;
-    }
-    .ai-loader-star.s1 { width: 70px; height: 70px; animation-delay: 0s; }
-    .ai-loader-star.s2 { width: 34px; height: 34px; top: 6px; right: 6px; animation-delay: 0.35s; }
-    .ai-loader-star.s3 { width: 24px; height: 24px; bottom: 10px; left: 8px; animation-delay: 0.7s; }
-    @keyframes starPulse {
-      0%, 100% { transform: scale(0.85) rotate(0deg);   opacity: 0.55; filter: hue-rotate(0deg); }
-      50%      { transform: scale(1.08) rotate(180deg); opacity: 1;    filter: hue-rotate(40deg); }
-    }
-    .ai-loader-text {
-      font-size: 15px; font-weight: 600;
-      background: linear-gradient(110deg, #aaa 20%, #fff 50%, #aaa 80%);
-      background-size: 220% 100%;
-      -webkit-background-clip: text;
-              background-clip: text;
-      color: transparent;
-      animation: aiShimmer 2.2s linear infinite;
-      text-align: center;
-      min-height: 22px;
-    }
-    body.light-mode .ai-loader-text {
-      background: linear-gradient(110deg, #555 20%, #000 50%, #555 80%);
-      background-size: 220% 100%;
-      -webkit-background-clip: text;
-              background-clip: text;
-      color: transparent;
-    }
-    @keyframes aiShimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    .ai-loader-sub {
-      font-size: 12px; color: var(--text-muted);
-      margin-top: 8px; text-align: center;
-    }
-    .ai-loader-progress {
-      width: 100%; max-width: 320px; height: 4px;
-      background: var(--card); border-radius: 4px;
-      overflow: hidden; margin-top: 16px;
-    }
-    .ai-loader-progress-bar {
-      width: 0%; height: 100%;
-      background: linear-gradient(90deg, #4f8cff, #a855f7, #ec4899);
-      transition: width 0.4s ease;
-      border-radius: 4px;
-    }
-
-    /* ===== AI Result success ===== */
-    .ai-result-success {
-      text-align: center; padding: 10px 0 4px;
-    }
-    .ai-result-icon {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 12px;
-      box-shadow: 0 6px 20px rgba(34,197,94,0.35);
-      animation: aiPopIn 0.45s cubic-bezier(.2,.9,.3,1.6);
-    }
-    @keyframes aiPopIn {
-      0% { transform: scale(0); opacity: 0; }
-      60% { transform: scale(1.15); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .ai-result-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .ai-result-sub   { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
-    .ai-result-list {
-      max-height: 220px; overflow-y: auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px;
-      margin-bottom: 14px;
-      text-align: left;
-    }
-    .ai-result-item {
-      display: flex; gap: 10px; align-items: center;
-      padding: 6px;
-      border-radius: 6px;
-      font-size: 13px;
-      color: var(--text);
-    }
-    .ai-result-item .num {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: linear-gradient(135deg, #4f8cff, #a855f7);
-      color: #fff; font-size: 11px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .ai-result-item .ttl {
-      flex: 1; overflow: hidden; text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .ai-play-btn-big {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(120deg, #4f8cff, #a855f7, #ec4899);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 8px 22px rgba(168,85,247,0.4);
-      transition: transform 0.08s, filter 0.15s;
-    }
-    .ai-play-btn-big:hover { filter: brightness(1.08); }
-    .ai-play-btn-big:active { transform: scale(0.98); }
-
-    .ai-error-box {
-      background: rgba(239,68,68,0.12);
-      border: 1px solid rgba(239,68,68,0.35);
-      color: #fca5a5;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
   </style>
 </head>
 <body>
@@ -1279,7 +1286,10 @@
         <button class="chip" data-q="ゲーム">ゲーム</button>
         <button class="chip" data-q="エンタメ">エンタメ</button>
         <button class="chip" data-q="最新テクノロジー">テック</button>
-        <button class="chip chip-ai" id="chipAiPlaylist" type="button" data-q="__ai_playlist__">✨ AIプレイリスト</button>
+        <button class="chip chip-ai" id="chipAiPlaylist" type="button" aria-label="AIプレイリストを作成">
+          <span class="chip-ai-spark" aria-hidden="true">✨</span>
+          <span class="chip-ai-label">AIプレイリスト</span>
+        </button>
         <div class="chips-extra-content">
   <a href="/proxy" class="extra-link">
     <span class="extra-text">新Elixirプロキシを利用</span>
@@ -1643,12 +1653,6 @@ if (!currentUrl.includes("projects") && !currentUrl.includes("private") && !curr
     document.getElementById('chipsBar').onclick = (e) => {
       const chip = e.target.closest('.chip');
       if (chip) {
-        // ✨ AI プレイリスト チップは「カテゴリ切り替え」として使わず、専用フローを起動させる
-        if (chip.dataset.q === '__ai_playlist__') {
-          // アクティブ状態は変えない（現在のタブを維持）
-          openAiPlaylistEntry();
-          return;
-        }
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         currentPage = 0;
@@ -2427,6 +2431,510 @@ if (!currentUrl.includes("projects") && !currentUrl.includes("private") && !curr
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
+    /* ===================================================================== */
+    /* =============== ✨ AI Playlist (MIN-Pro-AI) ========================== */
+    /* ===================================================================== */
+    (function initAiPlaylist() {
+      const GROQ_API_KEY = "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";
+      const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+      const MODEL_NAME = "meta-llama/llama-4-scout-17b-16e-instruct";
+
+      const PRESETS = [
+        "Music", "EDM", "ゲーム実況", "J-POP", "アニソン",
+        "ボーカロイド", "K-POP", "Lo-Fi", "映画予告編",
+        "テックレビュー", "検証動画", "スポーツハイライト",
+        "ダンス", "ロック", "ジャズ", "クラシック",
+        "ホラーゲーム", "FPS実況", "マイクラ実況",
+        "動画エッセイ", "ドッキリ", "動物"
+      ];
+
+      const LIB_HISTORY_KEY = 'mt_history';
+      const LIB_LIKED_KEY = 'mt_liked';
+
+      function libGetSafe(key) {
+        try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+      }
+      function getSubscribedChannelsLocal() {
+        const channels = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('subscribed_') && localStorage.getItem(key) === 'true') {
+            channels.push(key.replace('subscribed_', ''));
+          }
+        }
+        return channels;
+      }
+      function hasUserData() {
+        const hist = libGetSafe(LIB_HISTORY_KEY);
+        const liked = libGetSafe(LIB_LIKED_KEY);
+        const subs = getSubscribedChannelsLocal();
+        return (hist.length + liked.length + subs.length) > 0;
+      }
+      function buildUserProfileSummary() {
+        const hist = libGetSafe(LIB_HISTORY_KEY).slice(0, 25);
+        const liked = libGetSafe(LIB_LIKED_KEY).slice(0, 15);
+        const subs = getSubscribedChannelsLocal().slice(0, 10);
+        const histLines = hist.map(h => `・「${(h.title||'').slice(0,80)}」 / ${h.channel||''}`).filter(s => s.length > 5);
+        const likedLines = liked.map(h => `・「${(h.title||'').slice(0,80)}」 / ${h.channel||''}`).filter(s => s.length > 5);
+        const parts = [];
+        if (subs.length) parts.push(`【登録チャンネル】\n${subs.map(s => '・' + s).join('\n')}`);
+        if (likedLines.length) parts.push(`【高評価した動画】\n${likedLines.join('\n')}`);
+        if (histLines.length) parts.push(`【最近の視聴履歴】\n${histLines.join('\n')}`);
+        return parts.join('\n\n');
+      }
+
+      /* ===== Modal DOM ===== */
+      const overlay = document.createElement('div');
+      overlay.className = 'aim-overlay';
+      overlay.id = 'aimOverlay';
+      overlay.innerHTML = `
+        <div class="aim-modal" id="aimModal" role="dialog" aria-modal="true" aria-labelledby="aimTitle">
+          <div id="aimContent"></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+      const contentEl = overlay.querySelector('#aimContent');
+
+      function openModal() { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closeModal() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+      function escapeHtml(s) {
+        return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      }
+
+      /* ===== Step: Choice (if user has data) ===== */
+      function renderChoice() {
+        contentEl.innerHTML = `
+          <div class="aim-title" id="aimTitle"><span class="aim-spark">✨</span> AIプレイリストを作成</div>
+          <div class="aim-sub">既存のあなたの気になる単語からプレイリストを作成します。</div>
+          <div class="aim-choice">
+            <button class="aim-choice-card" data-mode="analyze">
+              <div class="aim-choice-icon">🧠</div>
+              <div class="aim-choice-text">
+                <div class="aim-choice-title">MIN-Pro-AI があなたの好みを分析しプレイリストを作成します</div>
+                <div class="aim-choice-desc">視聴履歴・高評価・登録チャンネルからあなたにピッタリの6本以上を選びます。</div>
+              </div>
+            </button>
+            <button class="aim-choice-card" data-mode="input">
+              <div class="aim-choice-icon">✍️</div>
+              <div class="aim-choice-text">
+                <div class="aim-choice-title">キーワードを入力して生成</div>
+                <div class="aim-choice-desc">好きなジャンルやアーティスト名を自由に入力してプレイリストを作ります。</div>
+              </div>
+            </button>
+          </div>
+          <div class="aim-actions">
+            <button class="aim-btn ghost" id="aimCancel">キャンセル</button>
+          </div>
+        `;
+        contentEl.querySelectorAll('.aim-choice-card').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            if (mode === 'analyze') startGeneration({ mode: 'analyze' });
+            else renderInput();
+          });
+        });
+        contentEl.querySelector('#aimCancel').addEventListener('click', closeModal);
+      }
+
+      /* ===== Step: Input (no data, or chosen input) ===== */
+      function renderInput(initialPlaceholder) {
+        const placeholder = initialPlaceholder || 'Music, EDM, ゲーム実況 ... など、複数可';
+        contentEl.innerHTML = `
+          <div class="aim-title" id="aimTitle"><span class="aim-spark">✨</span> あなたの好みの単語を入力してください</div>
+          <div class="aim-sub">MIN-Pro-AIが最高のプレイリストを作成します。複数のキーワードをカンマやスペースで区切るとより多様な選曲になります。</div>
+          <input type="text" class="aim-input" id="aimInput" placeholder="${placeholder}" autocomplete="off" />
+          <div class="aim-presets" id="aimPresets"></div>
+          <div class="aim-actions">
+            <button class="aim-btn ghost" id="aimCancel">キャンセル</button>
+            <button class="aim-btn primary" id="aimGenerate">✨ 生成</button>
+          </div>
+        `;
+        const presetsEl = contentEl.querySelector('#aimPresets');
+        const input = contentEl.querySelector('#aimInput');
+        const selectedSet = new Set();
+
+        PRESETS.forEach(p => {
+          const b = document.createElement('button');
+          b.className = 'aim-preset';
+          b.type = 'button';
+          b.textContent = p;
+          b.addEventListener('click', () => {
+            if (selectedSet.has(p)) { selectedSet.delete(p); b.classList.remove('selected'); }
+            else { selectedSet.add(p); b.classList.add('selected'); }
+            const cur = Array.from(selectedSet);
+            input.value = cur.join(', ');
+          });
+          presetsEl.appendChild(b);
+        });
+
+        contentEl.querySelector('#aimCancel').addEventListener('click', closeModal);
+        contentEl.querySelector('#aimGenerate').addEventListener('click', () => {
+          const text = input.value.trim();
+          if (!text) { input.focus(); input.style.borderColor = '#ff6b6b'; setTimeout(() => input.style.borderColor = '', 1200); return; }
+          startGeneration({ mode: 'input', keywords: text });
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') contentEl.querySelector('#aimGenerate').click();
+        });
+        setTimeout(() => input.focus(), 80);
+      }
+
+      /* ===== Loading screen (Gemini-like) ===== */
+      const LOADING_PHASES = [
+        'あなたの好みを分析中...',
+        'MIN-Pro-AI が作品を選曲しています...',
+        'ベストマッチを厳選中...',
+        'YouTubeから実在する動画を検索中...',
+        'プレイリストを構築中...'
+      ];
+      let loadingPhaseTimer = null;
+      function renderLoading() {
+        contentEl.innerHTML = `
+          <div class="aim-title" id="aimTitle"><span class="aim-spark">✨</span> MIN-Pro-AI が生成中</div>
+          <div class="aim-loading">
+            <div class="aim-orb"></div>
+            <div class="aim-loading-text" id="aimLoadingText">${LOADING_PHASES[0]}</div>
+            <div class="aim-loading-sub" id="aimLoadingSub">数秒かかる場合があります</div>
+            <div class="aim-progress"></div>
+          </div>
+        `;
+        let idx = 0;
+        const textEl = contentEl.querySelector('#aimLoadingText');
+        clearInterval(loadingPhaseTimer);
+        loadingPhaseTimer = setInterval(() => {
+          idx = (idx + 1) % LOADING_PHASES.length;
+          if (textEl) {
+            textEl.style.opacity = '0';
+            setTimeout(() => { textEl.textContent = LOADING_PHASES[idx]; textEl.style.opacity = '1'; }, 200);
+          }
+        }, 1500);
+      }
+      function updateLoadingSub(text) {
+        const sub = contentEl.querySelector('#aimLoadingSub');
+        if (sub) sub.textContent = text;
+      }
+      function stopLoadingTimer() { clearInterval(loadingPhaseTimer); loadingPhaseTimer = null; }
+
+      /* ===== Build prompts ===== */
+      const STRICT_SYSTEM_PROMPT = (
+        "あなたはユーザーの好みからYouTubeの動画のプレイリストを作成するAIです。\n" +
+        "【絶対厳守ルール】\n" +
+        "1. 回答は必ず、前置きや挨拶、余計な分なしで構成してください。\n" +
+        "2. 必ず6個以上の違った動画を推薦して、動画のタイトルの終わりには必ず.をつけてこちら側がそれぞれの動画タイトルを区別できるようにして\n" +
+        "3. 架空の・存在しない動画タイトルは絶対に生成しないこと。YouTube上に実在する、多くのユーザーが視聴している有名で人気のある動画・チャンネルの検索しやすい正確なタイトルのみを出力してください。\n" +
+        "4. 動画タイトルは、YouTubeで検索したときにその動画が一並び表示されるような、アーティスト名やチャンネル名を含む十分に具体的で一意な表記にしてください。\n" +
+        "5. 動画タイトルとタイトルの間は「.」のみで区切り、改行や番号付け・記号・Markdown記法は使わないこと。\n" +
+        "6. タイトルに「.」を除く句点・末尾記号はつけないこと。\n" +
+        "7. ユーザーの好みに厳密に合わせ、ジャンルや雰囲気の多様性を考慮して、プレイリストとして聶いて楽しい順番・構成にしてください。\n" +
+        "8. 一同じアーティストの同じ曲など重複は避けること。\n" +
+        "9. 出力はタイトル列のみ。例： アーティスト名 - 曲名.アーティスト名 - 曲名.アーティスト名 - 曲名.\n" +
+        "10. 不確かなタイトルよりも、認知度が高く検索ヒット率が高い代表曲・代表動画を優先してください。"
+      );
+
+      function buildUserPrompt({ mode, keywords }) {
+        if (mode === 'analyze') {
+          const profile = buildUserProfileSummary();
+          return (
+            "以下はユーザーのYouTube視聴データです。この人の好みを深く分析し、その人が間違いなく「もっと見たくなる」ような、YouTubeに実在する人気動画で9個前後のプレイリストを作ってください。\n" +
+            "ジャンルは偏らせすぎず、しかしユーザーの趣味領域を中心に構成してください。\n\n" +
+            (profile || "【データなし】人気の高い多様なジャンルの代表的な動画を推薦してください。")
+          );
+        } else {
+          return (
+            `ユーザーの好みのキーワード：${keywords}\n\n` +
+            "このキーワードに関連するYouTubeに実在する有名で人気のある動画で9個前後のプレイリストを作成してください。\n" +
+            "架空のタイトルは絶対に生成せず、認知度が高く、アーティスト名やチャンネル名を含む検索ヒットしやすい正確なタイトルを出してください。"
+          );
+        }
+      }
+
+      /* ===== Call Groq ===== */
+      async function callGroq(messages) {
+        const res = await fetch(GROQ_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: MODEL_NAME,
+            messages,
+            temperature: 0.75,
+            max_tokens: 900
+          })
+        });
+        if (!res.ok) {
+          const errText = await res.text().catch(() => '');
+          throw new Error(`AI API error ${res.status}: ${errText.slice(0,200)}`);
+        }
+        const data = await res.json();
+        const txt = data?.choices?.[0]?.message?.content || '';
+        return txt;
+      }
+
+      /* ===== Parse titles ===== */
+      function parseTitles(raw) {
+        if (!raw) return [];
+        // Remove markdown noise
+        let t = raw.replace(/```[\s\S]*?```/g, ' ').replace(/^\s*[-*\d+.)\s]+/gm, '');
+        // Split by '.' (the model is forced to end titles with '.')
+        const parts = t.split('.').map(s => s.trim()).filter(s => s.length >= 3);
+        // Filter out obvious non-titles
+        const titles = [];
+        const seen = new Set();
+        for (const p of parts) {
+          // Remove leading numbering/bullets
+          let title = p.replace(/^[\s\-*\u30fb•●○▶▷☞☛]+/, '').trim();
+          if (title.length < 3 || title.length > 120) continue;
+          if (/^(こちら|以下|それでは|了解|わかりました|note|note:|playlist)/i.test(title)) continue;
+          const key = title.toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          titles.push(title);
+        }
+        return titles.slice(0, 12);
+      }
+
+      /* ===== Search each title via /api/1-search ===== */
+      async function searchTitle(title) {
+        try {
+          const res = await fetch(`/api/1-search?q=${encodeURIComponent(title)}`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          let item = null;
+          if (Array.isArray(data)) item = data.find(x => x && x.type === 'video' && x.id) || data.find(x => x && x.id);
+          else if (data && data.id) item = data;
+          else if (data && Array.isArray(data.items)) item = data.items.find(x => x && x.id);
+          else if (data && Array.isArray(data.results)) item = data.results.find(x => x && x.id);
+          if (!item || !item.id) return null;
+          return {
+            id: item.id,
+            title: item.title || title,
+            channelTitle: item.channelTitle || (item.shortBylineText?.runs?.[0]?.text) || '',
+            thumbnail: item.thumbnail?.thumbnails?.[1]?.url || item.thumbnail?.thumbnails?.[0]?.url || `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`,
+            length: item.length?.simpleText || ''
+          };
+        } catch (e) {
+          console.warn('searchTitle fail:', title, e);
+          return null;
+        }
+      }
+
+      /* ===== Main generation pipeline ===== */
+      async function startGeneration(opts) {
+        renderLoading();
+        try {
+          const messages = [
+            { role: 'system', content: STRICT_SYSTEM_PROMPT },
+            { role: 'user', content: buildUserPrompt(opts) }
+          ];
+          updateLoadingSub('MIN-Pro-AI に問い合わせ中...');
+          const raw = await callGroq(messages);
+          const titles = parseTitles(raw);
+          if (titles.length < 3) {
+            throw new Error('AIから十分なタイトルを取得できませんでした。もう一度お試しください。');
+          }
+          updateLoadingSub(`${titles.length}本の動画をYouTubeで検索中...`);
+
+          // Search in parallel but with concurrency limit
+          const results = [];
+          const CONCURRENCY = 4;
+          let cursor = 0;
+          async function worker() {
+            while (cursor < titles.length) {
+              const myIdx = cursor++;
+              const t = titles[myIdx];
+              const r = await searchTitle(t);
+              if (r) results.push({ ...r, _idx: myIdx });
+            }
+          }
+          await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+          results.sort((a, b) => a._idx - b._idx);
+
+          // Dedup by video id
+          const seen = new Set();
+          const unique = [];
+          for (const r of results) {
+            if (seen.has(r.id)) continue;
+            seen.add(r.id);
+            unique.push(r);
+          }
+
+          stopLoadingTimer();
+          if (unique.length === 0) {
+            throw new Error('該当する動画が見つかりませんでした。キーワードを変えて再試行してください。');
+          }
+
+          renderResult(unique);
+        } catch (err) {
+          stopLoadingTimer();
+          renderError(err.message || String(err));
+        }
+      }
+
+      function renderError(msg) {
+        contentEl.innerHTML = `
+          <div class="aim-title"><span class="aim-spark">⚠️</span> エラーが発生しました</div>
+          <div class="aim-error">${escapeHtml(msg)}</div>
+          <div class="aim-actions">
+            <button class="aim-btn ghost" id="aimCancel">閉じる</button>
+            <button class="aim-btn primary" id="aimRetry">もう一度</button>
+          </div>
+        `;
+        contentEl.querySelector('#aimCancel').addEventListener('click', closeModal);
+        contentEl.querySelector('#aimRetry').addEventListener('click', launchEntry);
+      }
+
+      /* ===== Render result + Play button ===== */
+      function renderResult(items) {
+        const listHtml = items.map((it, i) => `
+          <div class="aim-result-item" style="animation-delay:${i * 0.05}s;">
+            <img class="aim-result-thumb" src="${escapeHtml(it.thumbnail)}" alt="" loading="lazy" onerror="this.src='https://i.ytimg.com/vi/${escapeHtml(it.id)}/hqdefault.jpg'">
+            <div class="aim-result-info">
+              <div class="aim-result-title">${escapeHtml(it.title)}</div>
+              <div class="aim-result-channel">${escapeHtml(it.channelTitle || '')}${it.length ? ' ・ ' + escapeHtml(it.length) : ''}</div>
+            </div>
+          </div>
+        `).join('');
+        contentEl.innerHTML = `
+          <div class="aim-title"><span class="aim-spark">✨</span> プレイリストが完成しました</div>
+          <div class="aim-sub">${items.length}本の動画が選ばれました。「動画を再生」を押すとプレイヤーが開きます。</div>
+          <div class="aim-result" id="aimResultList">${listHtml}</div>
+          <div class="aim-actions">
+            <button class="aim-btn ghost" id="aimAgain">やり直す</button>
+            <button class="aim-btn primary" id="aimPlay">▶ 動画を再生</button>
+          </div>
+        `;
+        contentEl.querySelector('#aimAgain').addEventListener('click', launchEntry);
+        contentEl.querySelector('#aimPlay').addEventListener('click', () => openPlayer(items));
+      }
+
+      /* ===== Open Player in new tab (about:blank trick) ===== */
+      function openPlayer(items) {
+        const win = window.open('about:blank', '_blank');
+        if (!win) {
+          alert('ポップアップがブロックされました。許可してもう一度試してください。');
+          return;
+        }
+        const payload = JSON.stringify(items).replace(/<\/script/g, '<\\/script');
+        const html = `<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>✨ AIプレイリスト ・ MIN-Tube-Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#0f0f0f;color:#f1f1f1;font-family:'Roboto',Arial,sans-serif;height:100%;}
+  .app{display:flex;height:100vh;width:100vw;}
+  .player-wrap{flex:1;min-width:0;display:flex;flex-direction:column;background:#000;}
+  .player-box{position:relative;width:100%;flex:1;background:#000;}
+  .player-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .now-playing{padding:14px 18px;background:#0f0f0f;border-top:1px solid #2a2a2a;}
+  .np-title{font-size:16px;font-weight:600;margin:0 0 4px;line-height:1.35;}
+  .np-channel{font-size:13px;color:#aaa;}
+  .pl-side{width:360px;max-width:42vw;background:#181818;border-left:1px solid #2a2a2a;display:flex;flex-direction:column;}
+  .pl-head{padding:14px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;gap:8px;}
+  .pl-head .spark{background:linear-gradient(120deg,#4f8bff,#a26bff,#ff6bd6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:18px;}
+  .pl-title{font-size:15px;font-weight:700;flex:1;}
+  .pl-count{font-size:12px;color:#aaa;}
+  .pl-list{flex:1;overflow-y:auto;}
+  .pl-list::-webkit-scrollbar{width:6px;} .pl-list::-webkit-scrollbar-thumb{background:#3f3f3f;border-radius:3px;}
+  .pl-item{display:flex;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .12s;align-items:center;}
+  .pl-item:hover{background:#272727;}
+  .pl-item.active{background:linear-gradient(90deg,rgba(79,139,255,0.18),rgba(162,107,255,0.18));}
+  .pl-item.active .pl-idx{color:#c8aaff;}
+  .pl-idx{width:18px;text-align:center;font-size:12px;color:#888;flex-shrink:0;}
+  .pl-thumb{width:96px;height:54px;border-radius:6px;object-fit:cover;background:#000;flex-shrink:0;}
+  .pl-info{flex:1;min-width:0;}
+  .pl-it-title{font-size:13px;font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pl-it-ch{font-size:11.5px;color:#aaa;margin-top:3px;}
+  .pl-controls{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #2a2a2a;background:#0f0f0f;}
+  .pl-controls button{flex:1;background:#272727;border:none;color:#f1f1f1;padding:9px 8px;border-radius:8px;cursor:pointer;font-size:12.5px;font-family:inherit;transition:background .12s;}
+  .pl-controls button:hover{background:#3f3f3f;}
+  .pl-controls .play-pri{background:linear-gradient(120deg,#4f8bff,#a26bff,#ff6bd6);font-weight:600;}
+  @media (max-width:780px){
+    .app{flex-direction:column;}
+    .pl-side{width:100%;max-width:none;border-left:none;border-top:1px solid #2a2a2a;height:50vh;}
+    .player-wrap{height:50vh;}
+  }
+</style>
+</head><body>
+<div class="app">
+  <div class="player-wrap">
+    <div class="player-box"><iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+    <div class="now-playing"><div class="np-title" id="npTitle">読み込み中...</div><div class="np-channel" id="npChannel"></div></div>
+  </div>
+  <aside class="pl-side">
+    <div class="pl-head"><span class="spark">✨</span><div class="pl-title">AIプレイリスト</div><div class="pl-count" id="plCount"></div></div>
+    <div class="pl-list" id="plList"></div>
+    <div class="pl-controls">
+      <button id="btnPrev">⏮ 前</button>
+      <button id="btnNext" class="play-pri">次 ⏭</button>
+    </div>
+  </aside>
+</div>
+<script>
+  const items = ${payload};
+  let current = 0;
+  const yt = document.getElementById('yt');
+  const list = document.getElementById('plList');
+  const npTitle = document.getElementById('npTitle');
+  const npChannel = document.getElementById('npChannel');
+  const plCount = document.getElementById('plCount');
+  plCount.textContent = items.length + ' 本';
+
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  function render(){
+    list.innerHTML = items.map((it,i)=>'<div class="pl-item'+(i===current?' active':'')+'" data-i="'+i+'"><div class="pl-idx">'+(i===current?'▶':(i+1))+'</div><img class="pl-thumb" src="'+esc(it.thumbnail)+'" onerror="this.src=\\'https://i.ytimg.com/vi/'+esc(it.id)+'/hqdefault.jpg\\'"><div class="pl-info"><div class="pl-it-title">'+esc(it.title)+'</div><div class="pl-it-ch">'+esc(it.channelTitle||'')+'</div></div></div>').join('');
+    list.querySelectorAll('.pl-item').forEach(el=>{
+      el.addEventListener('click',()=>{current=parseInt(el.dataset.i,10); play();});
+    });
+  }
+  function play(){
+    const it = items[current];
+    if(!it) return;
+    yt.src = 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(it.id)+'?autoplay=1&rel=0&modestbranding=1&enablejsapi=1';
+    npTitle.textContent = it.title || '';
+    npChannel.textContent = it.channelTitle || '';
+    render();
+    const active = list.querySelector('.pl-item.active');
+    if(active) active.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+  document.getElementById('btnPrev').addEventListener('click',()=>{current=(current-1+items.length)%items.length;play();});
+  document.getElementById('btnNext').addEventListener('click',()=>{current=(current+1)%items.length;play();});
+  render();
+  play();
+<\/script>
+</body></html>`;
+        win.document.open();
+        win.document.write(html);
+        win.document.close();
+      }
+
+      /* ===== Entry point ===== */
+      function launchEntry() {
+        openModal();
+        if (hasUserData()) renderChoice();
+        else renderInput();
+      }
+
+      const chipBtn = document.getElementById('chipAiPlaylist');
+      if (chipBtn) {
+        chipBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          // 他のactiveチップはそのまま（AIチップはクエリを切り替えない）
+          launchEntry();
+        }, true);
+      }
+    })();
+    /* ===================================================================== */
+
     
   </script>
   
@@ -2452,771 +2960,6 @@ if (!currentUrl.includes("projects") && !currentUrl.includes("private") && !curr
     ライブラリ
   </button>
 </nav>
-
-<!-- ===== MIN-Pro-AI Playlist Modal ===== -->
-<div class="ai-modal-overlay" id="aiModalOverlay" role="dialog" aria-modal="true" aria-labelledby="aiModalTitleText">
-  <div class="ai-modal" id="aiModal">
-    <div class="ai-modal-header">
-      <div class="ai-logo">✨</div>
-      <div class="ai-modal-title" id="aiModalTitleText">MIN-Pro-AI プレイリスト</div>
-      <button class="ai-modal-close" type="button" onclick="closeAiModal()" aria-label="閉じる">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-      </button>
-    </div>
-    <div class="ai-modal-body" id="aiModalBody"></div>
-    <div class="ai-modal-footer" id="aiModalFooter"></div>
-  </div>
-</div>
-
-<script>
-(function () {
-  'use strict';
-
-  // ====== MIN-Pro-AI Playlist Module ======
-  // ⚠ Groq API キーはユーザー指定のもの。ブラウザ側で利用するため公開キー扱いとなる点に注意。
-  const GROQ_API_KEY = "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";
-  const GROQ_MODEL   = "meta-llama/llama-4-scout-17b-16e-instruct";
-  const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
-
-  // 検索エンドポイント（ユーザー指定）
-  const SEARCH_ENDPOINT = (q) => `/api/1-search?q=${encodeURIComponent(q)}`;
-
-  // 既存ライブラリストレージキー（既存コードと同じ）
-  const KEY_HISTORY   = 'mt_history';
-  const KEY_LIKED     = 'mt_liked';
-  const KEY_PLAYLISTS = 'mt_playlists';
-  const KEY_SEARCH_HISTORY = 'mt_search_history';
-
-  // 好みチップ初期候補
-  const PREF_SUGGESTIONS = [
-    'Music', 'EDM', 'HIKAKIN', 'ゲーム実況', 'アニメ', 'ボカロ',
-    'J-POP', 'ASMR', 'Vlog', 'お笑い', '料理', 'カラオケ',
-    'Mrs. GREEN APPLE', 'YOASOBI', 'マインクラフト', 'スプラトゥーン',
-    'ガジェット', 'プログラミング', 'スポーツ', 'PV/MV', '弾いてみた', 'ライブ映像'
-  ];
-
-  // システムプロンプト（ユーザー指定厳守）
-  const SYSTEM_PROMPT =
-    'あなたはユーザーの好みからYoutubeの動画のプレイリストを作成するAIです\n' +
-    '【絶対厳守ルール】\n' +
-    '1. 回答は必ず、前置きや挨拶、余計な分なしで構成してください。\n' +
-    '2. 必ず6個以上の違った動画を推薦して　動画のタイトルの終わりには必ず.をつけてこちら側がそれぞれの動画タイトルを区別できるようにして';
-
-  // ===== Utility =====
-  function libGet(key) {
-    try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
-  }
-  function safeShowToast(msg) {
-    try { if (typeof showToast === 'function') return showToast(msg); } catch (_) {}
-    console.log('[AI]', msg);
-  }
-
-  // ===== Modal helpers =====
-  const overlay = () => document.getElementById('aiModalOverlay');
-  const body    = () => document.getElementById('aiModalBody');
-  const footer  = () => document.getElementById('aiModalFooter');
-  const titleEl = () => document.getElementById('aiModalTitleText');
-
-  function openAiModal() {
-    overlay().classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeAiModal() {
-    overlay().classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  window.closeAiModal = closeAiModal;
-
-  // 背景クリック / ESC で閉じる
-  document.addEventListener('click', (e) => {
-    if (e.target && e.target.id === 'aiModalOverlay') closeAiModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlay().classList.contains('open')) closeAiModal();
-  });
-
-  // ===== Entry point: chip クリックで呼ばれる =====
-  function openAiPlaylistEntry() {
-    const hist  = libGet(KEY_HISTORY);
-    const liked = libGet(KEY_LIKED);
-    const pls   = libGet(KEY_PLAYLISTS);
-    const search= libGet(KEY_SEARCH_HISTORY);
-
-    // 動画情報や検索履歴がローカルストレージに何もない場合 → 好み入力フロー
-    const hasAnyData = (hist.length + liked.length + search.length) > 0
-                       || pls.some(p => p && p.items && p.items.length > 0);
-
-    if (!hasAnyData) {
-      renderPreferenceInput();
-    } else {
-      renderChoiceScreen();
-    }
-    openAiModal();
-  }
-  window.openAiPlaylistEntry = openAiPlaylistEntry;
-
-  // ===== Screen 1A: 好みワード入力（データなし時） =====
-  function renderPreferenceInput(prefill) {
-    titleEl().textContent = '✨ MIN-Pro-AI プレイリスト';
-    const selected = new Set(prefill || []);
-    body().innerHTML = `
-      <div class="ai-modal-desc">
-        あなたの好みの単語を入力してください。<br>
-        <strong>MIN-Pro-AI</strong> が最高のプレイリストを作成します ✨
-      </div>
-      <input id="aiPrefInput" class="ai-input" type="text"
-             placeholder="例: Music, EDM, HIKAKIN, ゲーム実況 ..."
-             value="${(prefill || []).join(', ').replace(/"/g,'&quot;')}">
-      <div class="ai-modal-sub" style="margin-top:14px;">クリックで追加：</div>
-      <div class="ai-chip-row" id="aiPrefChips"></div>
-    `;
-    const chipRow = document.getElementById('aiPrefChips');
-    PREF_SUGGESTIONS.forEach(word => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'ai-chip' + (selected.has(word) ? ' selected' : '');
-      b.textContent = word;
-      b.onclick = () => {
-        b.classList.toggle('selected');
-        const input = document.getElementById('aiPrefInput');
-        const cur = input.value.split(/[,、，]/).map(s => s.trim()).filter(Boolean);
-        const idx = cur.indexOf(word);
-        if (b.classList.contains('selected')) {
-          if (idx === -1) cur.push(word);
-        } else {
-          if (idx !== -1) cur.splice(idx, 1);
-        }
-        input.value = cur.join(', ');
-      };
-      chipRow.appendChild(b);
-    });
-
-    footer().innerHTML = `
-      <button class="ai-btn" type="button" onclick="closeAiModal()">キャンセル</button>
-      <button class="ai-btn primary" type="button" id="aiPrefGoBtn">
-        <span style="display:inline-flex;align-items:center;gap:6px;">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2l2.39 6.96L21.5 9.27l-5.5 4.73L17.77 21 12 17.27 6.23 21 8 14l-5.5-4.73L9.61 8.96z"/></svg>
-          プレイリストを生成
-        </span>
-      </button>
-    `;
-    document.getElementById('aiPrefGoBtn').onclick = () => {
-      const val = document.getElementById('aiPrefInput').value.trim();
-      if (!val) { safeShowToast('好みの単語を入力してください'); return; }
-      const keywords = val.split(/[,、，\n]/).map(s => s.trim()).filter(Boolean);
-      if (!keywords.length) { safeShowToast('好みの単語を入力してください'); return; }
-      runAiGeneration({ mode: 'preference', keywords });
-    };
-
-    // Enterで送信
-    document.getElementById('aiPrefInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('aiPrefGoBtn').click(); }
-    });
-  }
-
-  // ===== Screen 1B: 選択肢（データあり時） =====
-  function renderChoiceScreen() {
-    titleEl().textContent = '✨ MIN-Pro-AI プレイリスト';
-    body().innerHTML = `
-      <div class="ai-modal-desc">
-        既存の「あなたの気になる単語」からプレイリストを作成します。<br>
-        生成方法を選んでください。
-      </div>
-
-      <div class="ai-choice-card" id="aiChoiceManual">
-        <div class="ai-choice-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-        </div>
-        <div>
-          <div class="ai-choice-title">気になる単語を入力する</div>
-          <div class="ai-choice-desc">自分で好きな単語を入力して AI に作らせる。</div>
-        </div>
-      </div>
-
-      <div class="ai-choice-card" id="aiChoiceAuto">
-        <div class="ai-choice-icon" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2l2.39 6.96L21.5 9.27l-5.5 4.73L17.77 21 12 17.27 6.23 21 8 14l-5.5-4.73L9.61 8.96z"/></svg>
-        </div>
-        <div>
-          <div class="ai-choice-title">MIN-Pro-AI があなたの好みを分析しプレイリストを作成します</div>
-          <div class="ai-choice-desc">視聴履歴・高評価・検索履歴・既存プレイリストから自動推薦。</div>
-        </div>
-      </div>
-    `;
-    footer().innerHTML = `
-      <button class="ai-btn" type="button" onclick="closeAiModal()">閉じる</button>
-    `;
-    document.getElementById('aiChoiceManual').onclick = () => renderPreferenceInput();
-    document.getElementById('aiChoiceAuto').onclick   = () => runAiGeneration({ mode: 'auto' });
-  }
-
-  // ===== Screen 2: ローディング（Gemini風） =====
-  const LOADER_MESSAGES = [
-    'MIN-Pro-AI があなたの好みを解析中…',
-    '最高のプレイリストを編成しています…',
-    '無数の動画から厳選しています…',
-    'タイトルを抽出して検索中…',
-    'もう少しで完成です ✨'
-  ];
-  function renderLoader(initialText) {
-    titleEl().textContent = '✨ 生成中…';
-    body().innerHTML = `
-      <div class="ai-loader-wrap">
-        <div class="ai-loader-stars">
-          <div class="ai-loader-star s1"></div>
-          <div class="ai-loader-star s2"></div>
-          <div class="ai-loader-star s3"></div>
-        </div>
-        <div class="ai-loader-text" id="aiLoaderText">${initialText || LOADER_MESSAGES[0]}</div>
-        <div class="ai-loader-sub" id="aiLoaderSub">少々お待ちください…</div>
-        <div class="ai-loader-progress"><div class="ai-loader-progress-bar" id="aiLoaderBar"></div></div>
-      </div>
-    `;
-    footer().innerHTML = '';
-  }
-  function setLoaderText(text, sub) {
-    const t = document.getElementById('aiLoaderText');
-    const s = document.getElementById('aiLoaderSub');
-    if (t && text) t.textContent = text;
-    if (s && typeof sub === 'string') s.textContent = sub;
-  }
-  function setLoaderProgress(percent) {
-    const bar = document.getElementById('aiLoaderBar');
-    if (bar) bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
-  }
-
-  // ===== Screen 3: 完了 =====
-  function renderResultSuccess(playlist) {
-    titleEl().textContent = '✅ プレイリストが完成しました';
-    const items = (playlist.items || []);
-    body().innerHTML = `
-      <div class="ai-result-success">
-        <div class="ai-result-icon">
-          <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        </div>
-        <div class="ai-result-title">「${escapeHtml(playlist.name)}」</div>
-        <div class="ai-result-sub">${items.length} 本の動画を追加しました</div>
-        <div class="ai-result-list">
-          ${items.map((it, i) => `
-            <div class="ai-result-item">
-              <div class="num">${i+1}</div>
-              <div class="ttl">${escapeHtml(it.title || '(無題)')}</div>
-            </div>
-          `).join('')}
-        </div>
-        <button class="ai-play-btn-big" type="button" id="aiPlayNowBtn">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
-          動画を再生
-        </button>
-      </div>
-    `;
-    footer().innerHTML = `
-      <button class="ai-btn" type="button" onclick="closeAiModal()">閉じる</button>
-      <button class="ai-btn" type="button" onclick="(function(){ closeAiModal(); if (typeof openDrawer==='function') openDrawer('playlistDetail','${playlist.id}'); })()">再生リストを開く</button>
-    `;
-    document.getElementById('aiPlayNowBtn').onclick = () => {
-      openAiPlayerWindow(playlist);
-    };
-  }
-
-  function renderError(message, retryFn) {
-    titleEl().textContent = '⚠ エラー';
-    body().innerHTML = `
-      <div class="ai-error-box">${escapeHtml(message)}</div>
-      <div class="ai-modal-sub">ネットワーク状況や入力内容を確認してから、もう一度お試しください。</div>
-    `;
-    footer().innerHTML = `
-      <button class="ai-btn" type="button" onclick="closeAiModal()">閉じる</button>
-      <button class="ai-btn primary" type="button" id="aiRetryBtn">もう一度</button>
-    `;
-    document.getElementById('aiRetryBtn').onclick = () => {
-      if (typeof retryFn === 'function') retryFn();
-      else openAiPlaylistEntry();
-    };
-  }
-
-  function escapeHtml(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
-  // ===== Build user prompt =====
-  function buildUserPrompt(ctx) {
-    if (ctx.mode === 'preference') {
-      const list = ctx.keywords.join(', ');
-      return (
-        'ユーザーの好みのキーワード: ' + list + '\n' +
-        'このユーザーのために、上記のキーワードを踏まえた最高のYouTube動画プレイリストを作成してください。\n' +
-        '動画タイトルだけを「タイトル1.タイトル2.タイトル3.」のように半角ピリオドで区切って6個以上返してください。'
-      );
-    }
-    // auto: ローカルストレージから素材を集約
-    const hist  = libGet(KEY_HISTORY).slice(0, 30);
-    const liked = libGet(KEY_LIKED).slice(0, 30);
-    const search= libGet(KEY_SEARCH_HISTORY).slice(0, 30);
-    const pls   = libGet(KEY_PLAYLISTS);
-
-    const histLines  = hist.map(h => `- ${h.title || ''}（${h.channel || ''}）`).join('\n');
-    const likedLines = liked.map(h => `- ${h.title || ''}（${h.channel || ''}）`).join('\n');
-    const searchLines= search.map(s => `- ${s.query || ''}`).join('\n');
-    const plLines = pls.flatMap(p => (p.items || []).slice(0,10).map(it => `- ${it.title || ''}（${it.channel || ''}）`)).slice(0, 40).join('\n');
-
-    return (
-      'あなたはこのユーザーのデータを分析するパーソナルAIです。以下の情報からユーザーの強い好みを抽出し、その嗜好に最適化された新しい動画プレイリストを作成してください。\n\n' +
-      '【視聴履歴（最新順）】\n' + (histLines || '(なし)') + '\n\n' +
-      '【高評価した動画】\n' + (likedLines || '(なし)') + '\n\n' +
-      '【検索履歴】\n' + (searchLines || '(なし)') + '\n\n' +
-      '【既存の再生リスト内の動画】\n' + (plLines || '(なし)') + '\n\n' +
-      'この情報から推測されるユーザーの趣味嗜好に沿った、まだ視聴していない・新鮮味のある動画を中心に、6個以上の異なるタイトルを「タイトル1.タイトル2.タイトル3.」の形式で、ピリオド区切りで返してください。動画タイトル以外（前置きや解説）は含めないこと。'
-    );
-  }
-
-  // ===== Groq API call =====
-  async function callGroq(userPrompt) {
-    const resp = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + GROQ_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        temperature: 0.85,
-        max_tokens: 800,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user',   content: userPrompt }
-        ]
-      })
-    });
-    if (!resp.ok) {
-      const t = await resp.text().catch(() => '');
-      throw new Error('AI 応答エラー: ' + resp.status + ' ' + (t || '').slice(0, 200));
-    }
-    const data = await resp.json();
-    const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!text || !text.trim()) throw new Error('AIから空の応答が返されました。');
-    return text.trim();
-  }
-
-  // ===== Parse titles =====
-  function parseTitles(text) {
-    // "タイトル1.タイトル2.タイトル3." 形式を期待。改行や半角/全角ピリオドにも寛容に。
-    // 番号付き (1. xxx) / 箇条書き (- xxx) の整形にも対応。
-    let raw = text.replace(/\r/g, '');
-    // 「タイトル: 」「Playlist:」みたいな見出しは捨てる
-    raw = raw.replace(/^[^\n]*[:：][ \t]*$/mg, '');
-    // 行頭の "1." "1)" "-" "・" を除去
-    raw = raw.split('\n').map(l => l.replace(/^\s*(?:\d{1,2}[\.\)）]\s*|[-・*•]\s*)/, '').trim()).join('\n');
-
-    // ピリオド（半角/全角）で分割。ただし「Mr.」「No.」みたいな略語をなるべく壊さないように。
-    // 「.+空白+大文字英字」「.+改行」を区切りとする。改行・全角句点・全角ピリオドも区切りに。
-    const parts = raw
-      .split(/(?:\.|。|．)(?=\s|$|\n)|\n+/)
-      .map(s => s.trim())
-      .map(s => s.replace(/^["'「『\u201c\u300c]+|["'」』\u201d\u300d]+$/g, '').trim())
-      .filter(Boolean)
-      // ノイズ除去
-      .filter(s => s.length >= 2 && s.length <= 120)
-      .filter(s => !/^(動画タイトル|プレイリスト|title|titles?)$/i.test(s));
-
-    // 重複排除
-    const seen = new Set();
-    const titles = [];
-    for (const p of parts) {
-      const k = p.toLowerCase();
-      if (seen.has(k)) continue;
-      seen.add(k);
-      titles.push(p);
-    }
-    return titles;
-  }
-
-  // ===== Search YouTube via /api/1-search =====
-  async function searchOne(title) {
-    try {
-      const res = await fetch(SEARCH_ENDPOINT(title), { method: 'GET' });
-      if (!res.ok) return null;
-      const data = await res.json().catch(() => null);
-      // 仕様上 1件の動画JSONが返る想定。配列で返るバックエンド差にも対応。
-      let item = null;
-      if (Array.isArray(data)) {
-        item = data.find(x => x && (x.type === 'video' || x.id)) || data[0] || null;
-      } else if (data && typeof data === 'object') {
-        if (data.items && Array.isArray(data.items)) {
-          item = data.items.find(x => x && (x.type === 'video' || x.id)) || data.items[0] || null;
-        } else {
-          item = data;
-        }
-      }
-      if (!item) return null;
-      // id 抽出（id が string、または {videoId} オブジェクト）
-      let id = null;
-      if (typeof item.id === 'string') id = item.id;
-      else if (item.id && typeof item.id === 'object') id = item.id.videoId || null;
-      else if (item.videoId) id = item.videoId;
-      if (!id) return null;
-      const channel = (item.channelTitle)
-        || (item.shortBylineText && item.shortBylineText.runs && item.shortBylineText.runs[0] && item.shortBylineText.runs[0].text)
-        || '';
-      const lengthText = (item.length && item.length.simpleText) || item.lengthText || '';
-      return {
-        id,
-        title: item.title || title,
-        channel,
-        length: lengthText,
-        isLive: !!item.isLive
-      };
-    } catch (e) {
-      console.warn('[AI] searchOne failed:', title, e);
-      return null;
-    }
-  }
-
-  // ===== Create playlist in existing localStorage structure =====
-  function createAiPlaylist(items) {
-    const pls = libGet(KEY_PLAYLISTS);
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    const name = `🤖 MIN-Pro-AI Mix - ${now.getFullYear()}/${pad(now.getMonth()+1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    const pl = {
-      id: 'ai_' + Date.now().toString(),
-      name,
-      items: items.map(it => ({
-        id: it.id,
-        title: it.title,
-        channel: it.channel,
-        views: '',
-        published: '',
-        ts: Date.now()
-      })),
-      createdAt: Date.now()
-    };
-    pls.push(pl);
-    try { localStorage.setItem(KEY_PLAYLISTS, JSON.stringify(pls)); } catch (e) { console.warn(e); }
-    return pl;
-  }
-
-  // ===== Main flow =====
-  async function runAiGeneration(ctx) {
-    renderLoader('MIN-Pro-AI を呼び出しています…');
-    setLoaderProgress(5);
-
-    // ローダーメッセージを切り替えるタイマー（演出用）
-    let loaderIdx = 0;
-    const loaderTimer = setInterval(() => {
-      loaderIdx = (loaderIdx + 1) % LOADER_MESSAGES.length;
-      setLoaderText(LOADER_MESSAGES[loaderIdx]);
-    }, 1800);
-
-    try {
-      const userPrompt = buildUserPrompt(ctx);
-      setLoaderText('AIにあなたの好みを送信中…');
-      setLoaderProgress(15);
-
-      const aiText = await callGroq(userPrompt);
-      setLoaderText('AIの応答を解析中…');
-      setLoaderProgress(35);
-
-      const titles = parseTitles(aiText);
-      if (titles.length < 1) {
-        throw new Error('AIの応答からタイトルを抽出できませんでした。もう一度お試しください。');
-      }
-      // 6個以上を厳守 → 足りなくても返ってきた分は全部使う
-      const useTitles = titles.slice(0, 25);
-
-      // それぞれを /api/1-search で検索
-      const results = [];
-      let done = 0;
-      const total = useTitles.length;
-      // 軽い並列度制御（4並列）
-      const queue = useTitles.slice();
-      async function worker() {
-        while (queue.length) {
-          const t = queue.shift();
-          setLoaderText('検索中: ' + (t.length > 30 ? t.slice(0,30)+'…' : t));
-          const r = await searchOne(t);
-          done++;
-          setLoaderProgress(35 + Math.round((done / total) * 60));
-          if (r) results.push(r);
-        }
-      }
-      await Promise.all([worker(), worker(), worker(), worker()]);
-
-      // 動画ID重複排除（順序維持）
-      const seen = new Set();
-      const uniq = [];
-      for (const r of results) {
-        if (!r || !r.id || seen.has(r.id)) continue;
-        seen.add(r.id);
-        uniq.push(r);
-      }
-      if (!uniq.length) throw new Error('動画が1本も見つかりませんでした。検索エンドポイントを確認してください。');
-
-      setLoaderProgress(98);
-      setLoaderText('プレイリストを保存中…');
-
-      const pl = createAiPlaylist(uniq);
-      setLoaderProgress(100);
-      clearInterval(loaderTimer);
-
-      // 完了画面
-      setTimeout(() => renderResultSuccess(pl), 350);
-
-    } catch (err) {
-      clearInterval(loaderTimer);
-      console.error('[AI] generation error', err);
-      renderError((err && err.message) ? err.message : '不明なエラーが発生しました。', () => {
-        // リトライ：同じ ctx で再実行
-        runAiGeneration(ctx);
-      });
-    }
-  }
-
-  // ===== Player window (新しいタブで開く) =====
-  // blob: で開くと YouTube 側に embed をブロックされる場合があるため about:blank の新規ウィンドウを使用。
-  function openAiPlayerWindow(playlist) {
-    const w = window.open('about:blank', '_blank');
-    if (!w) {
-      safeShowToast('ポップアップがブロックされました。許可してから再度お試しください。');
-      return;
-    }
-    const safe = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'
-    })[c]);
-    const itemsJson = JSON.stringify(playlist.items.map(it => ({
-      id: it.id, title: it.title || '', channel: it.channel || ''
-    })));
-    const plName = safe(playlist.name);
-
-    const html = `<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>${plName} - MIN-Tube Player</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root { --bg:#0f0f0f; --surface:#1c1c1c; --card:#262626; --text:#f1f1f1; --muted:#aaa; --accent:#a855f7; --border:#333; }
-  * { box-sizing: border-box; }
-  html, body { margin:0; padding:0; background: var(--bg); color: var(--text); font-family: 'Roboto', sans-serif; height:100%; }
-  .wrap { display:flex; height:100vh; }
-  .player-pane { flex:1; min-width:0; display:flex; flex-direction:column; background:#000; }
-  .player-frame { flex:1; min-height:0; position:relative; }
-  .player-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; background:#000; }
-  .now-bar { padding:14px 18px; background: var(--surface); border-top:1px solid var(--border); }
-  .now-title { font-size:16px; font-weight:700; margin:0 0 4px; line-height:1.4; }
-  .now-channel { font-size:13px; color: var(--muted); margin:0; }
-  .now-controls { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-  .ctrl-btn { background: var(--card); color: var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 13px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
-  .ctrl-btn:hover { background:#333; }
-  .ctrl-btn.primary { background: linear-gradient(120deg,#4f8cff,#a855f7,#ec4899); border:none; color:#fff; font-weight:600; }
-  .list-pane { width: 360px; background: var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; }
-  .list-header { padding:14px 16px; border-bottom:1px solid var(--border); }
-  .list-title { font-size:14px; font-weight:700; margin:0; }
-  .list-meta  { font-size:12px; color: var(--muted); margin-top:3px; }
-  .list-body  { flex:1; overflow-y:auto; padding:6px; }
-  .pl-item {
-    display:flex; gap:10px; padding:8px; border-radius:10px; cursor:pointer; align-items:center;
-    transition: background 0.1s;
-  }
-  .pl-item:hover { background: rgba(255,255,255,0.05); }
-  .pl-item.active { background: rgba(168,85,247,0.18); }
-  .pl-thumb {
-    position: relative; width:108px; min-width:108px; aspect-ratio:16/9; border-radius:6px; overflow:hidden;
-    background:#000;
-  }
-  .pl-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-  .pl-thumb .badge {
-    position:absolute; left:4px; top:4px;
-    background: rgba(0,0,0,0.75); color:#fff; font-size:10px;
-    padding:2px 5px; border-radius:4px; font-weight:600;
-  }
-  .pl-thumb .play-now {
-    position:absolute; right:4px; bottom:4px;
-    background: var(--accent); color:#fff; font-size:10px; padding:2px 6px;
-    border-radius:4px; font-weight:600; display:none;
-  }
-  .pl-item.active .pl-thumb .play-now { display:inline-block; }
-  .pl-info { flex:1; min-width:0; }
-  .pl-info .t { font-size:13px; font-weight:500; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .pl-info .c { font-size:12px; color: var(--muted); margin-top:3px; }
-  .topbar {
-    display:flex; align-items:center; gap:10px; padding:10px 16px;
-    background: var(--surface); border-bottom:1px solid var(--border);
-  }
-  .brand {
-    font-weight:700; font-size:14px;
-    background: linear-gradient(120deg,#4f8cff,#a855f7,#ec4899);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .pl-name { font-size:13px; color: var(--muted); margin-left:auto; }
-  @media (max-width: 820px) {
-    .wrap { flex-direction: column; }
-    .list-pane { width:100%; height:42vh; border-left:none; border-top:1px solid var(--border); }
-    .player-pane { height:58vh; }
-  }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="player-pane">
-      <div class="topbar">
-        <div class="brand">✨ MIN-Pro-AI Player</div>
-        <div class="pl-name" id="plNameTop"></div>
-      </div>
-      <div class="player-frame">
-        <iframe id="ytFrame"
-                src=""
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-                referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      </div>
-      <div class="now-bar">
-        <p class="now-title" id="nowTitle"></p>
-        <p class="now-channel" id="nowChannel"></p>
-        <div class="now-controls">
-          <button class="ctrl-btn" id="btnPrev">◀ 前へ</button>
-          <button class="ctrl-btn primary" id="btnNext">次へ ▶</button>
-          <button class="ctrl-btn" id="btnShuffle">🔀 シャッフル</button>
-          <button class="ctrl-btn" id="btnAutoplay">🔁 自動再生: ON</button>
-        </div>
-      </div>
-    </div>
-    <aside class="list-pane">
-      <div class="list-header">
-        <p class="list-title" id="plListTitle"></p>
-        <p class="list-meta"  id="plListMeta"></p>
-      </div>
-      <div class="list-body" id="plListBody"></div>
-    </aside>
-  </div>
-
-<\u0073cript>
-(function() {
-  var items   = ${itemsJson};
-  var plName  = ${JSON.stringify(playlist.name)};
-  var idx     = 0;
-  var autoplay = true;
-
-  var frame    = document.getElementById('ytFrame');
-  var listBody = document.getElementById('plListBody');
-  var nowT     = document.getElementById('nowTitle');
-  var nowC     = document.getElementById('nowChannel');
-  document.getElementById('plListTitle').textContent = plName;
-  document.getElementById('plListMeta').textContent  = items.length + ' 本の動画';
-  document.getElementById('plNameTop').textContent   = plName;
-  document.title = plName + ' - MIN-Tube Player';
-
-  function thumb(id) { return 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg'; }
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\\'':'&#39;'})[c]; }); }
-
-  function renderList() {
-    listBody.innerHTML = items.map(function(it, i) {
-      return '<div class="pl-item' + (i===idx?' active':'') + '" data-i="'+i+'">'
-        + '<div class="pl-thumb">'
-        +   '<img src="'+thumb(it.id)+'" alt="" loading="lazy" onerror="this.style.opacity=0.2">'
-        +   '<span class="badge">'+(i+1)+'</span>'
-        +   '<span class="play-now">▶ 再生中</span>'
-        + '</div>'
-        + '<div class="pl-info">'
-        +   '<div class="t">'+esc(it.title)+'</div>'
-        +   '<div class="c">'+esc(it.channel)+'</div>'
-        + '</div>'
-        + '</div>';
-    }).join('');
-    Array.prototype.forEach.call(listBody.querySelectorAll('.pl-item'), function(el){
-      el.addEventListener('click', function(){
-        var i = parseInt(el.getAttribute('data-i'), 10);
-        if (!isNaN(i)) play(i);
-      });
-    });
-    var active = listBody.querySelector('.pl-item.active');
-    if (active && active.scrollIntoView) active.scrollIntoView({ block:'nearest', behavior:'smooth' });
-  }
-
-  function play(i) {
-    if (i < 0 || i >= items.length) return;
-    idx = i;
-    var it = items[i];
-    // youtube-nocookie 埋め込み + enablejsapi + autoplay
-    var params = [
-      'autoplay=' + (autoplay ? 1 : 0),
-      'rel=0',
-      'modestbranding=1',
-      'playsinline=1',
-      'enablejsapi=1',
-      'origin=' + encodeURIComponent(location.origin)
-    ].join('&');
-    frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(it.id) + '?' + params;
-    nowT.textContent = it.title || '';
-    nowC.textContent = it.channel || '';
-    renderList();
-  }
-
-  function next() { play(idx + 1 >= items.length ? 0 : idx + 1); }
-  function prev() { play(idx - 1 < 0 ? items.length - 1 : idx - 1); }
-  function shuffle() {
-    for (var i = items.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = items[i]; items[i] = items[j]; items[j] = t;
-    }
-    play(0);
-  }
-
-  document.getElementById('btnNext').onclick = next;
-  document.getElementById('btnPrev').onclick = prev;
-  document.getElementById('btnShuffle').onclick = shuffle;
-  document.getElementById('btnAutoplay').onclick = function() {
-    autoplay = !autoplay;
-    this.textContent = '🔁 自動再生: ' + (autoplay ? 'ON' : 'OFF');
-  };
-
-  // YouTube iframe API のメッセージで動画終了を検知して次へ
-  window.addEventListener('message', function(ev) {
-    if (!ev || !ev.data) return;
-    try {
-      var data = (typeof ev.data === 'string') ? JSON.parse(ev.data) : ev.data;
-      if (data && data.event === 'onStateChange' && data.info === 0 && autoplay) {
-        next();
-      }
-    } catch (e) { /* ignore */ }
-  });
-
-  // iframe load 時に listening を送って状態変化を購読
-  frame.addEventListener('load', function() {
-    try {
-      frame.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
-      frame.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }), '*');
-    } catch (e) {}
-  });
-
-  // 初期再生
-  if (items.length) play(0);
-  else {
-    nowT.textContent = '動画がありません';
-  }
-})();
-<\/script>
-</body>
-</html>`;
-
-    try {
-      w.document.open();
-      w.document.write(html);
-      w.document.close();
-      w.focus();
-    } catch (e) {
-      console.error('player window write failed', e);
-      safeShowToast('プレーヤーの起動に失敗しました');
-    }
-  }
-  window.openAiPlayerWindow = openAiPlayerWindow;
-
-})();
-</script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
